@@ -11,7 +11,8 @@ exports.renderWithLayout = (res, view, options = {}) => {
         styles: [],
         scripts: [],
         messages: {},
-        showFooter: true
+        showFooter: true,
+        user: res.locals.user || null  // Get user from res.locals if available
     };
 
     // Merge defaults with provided options
