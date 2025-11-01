@@ -1,30 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>Register - OliveStore</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/css/auth.css" />
-  </head>
-<body>
-  <%- include('partials/navbar', { user }) %>
-  <main class="container auth-page">
-  <h1>Register</h1>
-  <% if (error) { %><p style="color:red"><%= error %></p><% } %>
-  <form method="post" action="/register">
-    <label>Name</label>
-    <input type="text" name="name" required />
-    <label>Email</label>
-    <input type="email" name="email" required />
-    <label>Phone Number</label>
-    <input type="text" name="phoneNumber" required />
-    <label>Password</label>
-    <input type="password" name="password" required />
-    <button type="submit">Create Account</button>
-  </form>
-  <p>Already have an account? <a href="/">Login</a></p>
-  </main>
-</body>
+<div class="auth-page">
+  <div class="auth-card">
+        <div class="auth-header">
+          <h1>Register</h1>
+          <p class="small">Create your OliveStore account</p>
+        </div>
+
+        <% if (error) { %>
+          <p class="error"><%= error %></p>
+        <% } %>
+
+        <form class="auth-form" method="post" action="/register">
+          <div>
+            <label for="name">Name</label>
+            <input id="name" class="input" type="text" name="name" required autocomplete="name" />
+          </div>
+
+          <div>
+            <label for="email">Email</label>
+            <input id="email" class="input" type="email" name="email" required autocomplete="email" />
+          </div>
+
+          <div>
+            <label for="phoneNumber">Phone Number</label>
+            <input id="phoneNumber" class="input" type="text" name="phoneNumber" required autocomplete="tel" />
+          </div>
+
+          <div>
+            <label for="password">Password</label>
+            <input id="password" class="input" type="password" name="password" required autocomplete="new-password" />
+          </div>
+
+          <div class="actions">
+            <div></div>
+            <button class="btn btn-primary" type="submit">Create Account</button>
+          </div>
+        </form>
+
+        <div class="separator"></div>
+        <p class="small center mt-8">Already have an account? <a class="link" href="/">Login</a></p>
+      </div>
+    </main>
+  </body>
 </html>
 
 

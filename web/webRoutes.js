@@ -10,6 +10,7 @@ const {
   deleteStore,
   getStoreById,
 } = require('../controllers/storeController');
+const { renderWithLayout } = require('../utils/viewHelpers');
 const { listProducts, getProduct, createProduct, updateProduct, deleteProduct } = require('../controllers/productController');
 const { listUsers, updateUserRole, deleteUser } = require('../controllers/userAdminController');
 const { getDashboardStats } = require('../controllers/dashboardController');
@@ -17,11 +18,21 @@ const { getDashboardStats } = require('../controllers/dashboardController');
 // Public pages
 router.get('/', (req, res) => {
   if (req.cookies && req.cookies.token) return res.redirect('/dashboard');
-  res.render('login', { error: null });
+  renderWithLayout(res, 'login', {
+    title: 'Login',
+    styles: ['auth_common', 'auth'],
+    showFooter: false,
+    error: null
+  });
 });
 
 router.get('/register', (req, res) => {
-  res.render('register', { error: null });
+  renderWithLayout(res, 'register', {
+    title: 'Register',
+    styles: ['auth_common', 'auth'],
+    showFooter: false,
+    error: null
+  });
 });
 
 // Auth handlers (using existing controllers)
@@ -35,7 +46,12 @@ router.post('/login', async (req, res, next) => {
     };
     await authUser(req, res, next);
   } catch (e) {
-    res.render('login', { error: 'Invalid credentials' });
+    renderWithLayout(res, 'login', {
+      title: 'Login',
+      styles: ['auth_common', 'auth'],
+      showFooter: false,
+      messages: { error: 'Invalid credentials' }
+    });
   }
 });
 
@@ -45,7 +61,12 @@ router.post('/register', async (req, res, next) => {
     res.json = (data) => res.redirect('/');
     await registerUser(req, res, next);
   } catch (e) {
-    res.render('register', { error: 'Registration failed' });
+    renderWithLayout(res, 'register', {
+      title: 'Register',
+      styles: ['auth_common', 'auth'],
+      showFooter: false,
+      messages: { error: 'Registration failed' }
+    });
   }
 });
 
@@ -57,17 +78,49 @@ router.get('/logout', (req, res) => {
 // Protected pages
 router.get('/dashboard', protect, async (req, res, next) => {
   try {
-    const fakeRes = { json(data){ return res.render('dashboard', { user: req.user, stats: data }); }, status(c){ this._s=c; return this; } };
+    const fakeRes = { 
+      json(data) {
+        return renderWithLayout(res, 'dashboard', {
+          title: 'Dashboard',
+          styles: ['dashboard'],
+          scripts: ['dashboard'],
+          user: req.user,
+          stats: data
+        });
+      }, 
+      status(c) { 
+        this._s = c; 
+        return this; 
+      } 
+    };
     await getDashboardStats(req, fakeRes, next);
-  } catch (e) { next(e); }
+  } catch (e) {
+    renderWithLayout(res, 'dashboard', {
+      title: 'Dashboard',
+      styles: ['dashboard'],
+      scripts: ['dashboard'],
+      user: req.user,
+      stats: {},
+      messages: { error: 'Error loading dashboard data' }
+    });
+  }
 });
 
 // Admin Panel: visible to admin and merchant (vendor) roles
 router.get('/admin', protect, (req, res) => {
   if (!(req.user.role === 'admin' || req.user.role === 'merchant')) {
-    return res.status(403).send('Forbidden');
+    return renderWithLayout(res, 'error', {
+      title: 'Forbidden',
+      messages: { error: 'You do not have permission to access this page' }
+    });
   }
-  res.render('admin_panel', { user: req.user });
+  renderWithLayout(res, 'admin_panel', {
+    title: 'Admin Panel',
+    styles: ['admin'],
+    scripts: ['admin'],
+    user: req.user
+  });
+  // page rendered with layout above
 });
 
 router.get('/stores', protect, async (req, res, next) => {
@@ -76,24 +129,66 @@ router.get('/stores', protect, async (req, res, next) => {
     const fakeRes = {
       json(data) {
         // support both array and {items,total}
-        const payload = Array.isArray(data) ? { items: data, total: data.length, page: 1, limit: data.length } : data;
-        res.render('stores_list', { user: req.user, stores: payload.items, q: req.query.q, page: payload.page || 1, limit: payload.limit || 10, hasMore: (payload.page || 1) * (payload.limit || 10) < (payload.total || 0) });
+        const payload = Array.isArray(data) ? { 
+          items: data, 
+          total: data.length, 
+          page: 1, 
+          limit: data.length 
+        } : data;
+        
+        renderWithLayout(res, 'stores_list', {
+          title: 'Stores',
+          styles: ['stores'],
+          scripts: ['stores'],
+          user: req.user,
+          stores: payload.items,
+          q: req.query.q,
+          page: payload.page || 1,
+          limit: payload.limit || 10,
+          hasMore: (payload.page || 1) * (payload.limit || 10) < (payload.total || 0)
+        });
       },
       status(code) { this._status = code; return this; }
     };
     await getStores(req, fakeRes, next);
   } catch (e) {
-    next(e);
+    renderWithLayout(res, 'stores_list', {
+      title: 'Stores',
+      styles: ['stores'],
+      scripts: ['stores'],
+      user: req.user,
+      stores: [],
+      q: req.query.q,
+      page: 1,
+      limit: 10,
+      hasMore: false,
+      messages: { error: 'Error loading stores' }
+    });
   }
 });
 
 router.get('/stores/new', protect, (req, res) => {
-  res.render('stores_new', { user: req.user, error: null });
+  renderWithLayout(res, 'stores_new', {
+    title: 'Create Store',
+    styles: ['stores'],
+    user: req.user,
+    error: null
+  });
 });
 
 router.get('/stores/:id/edit', protect, async (req, res, next) => {
   try {
-    const fakeRes = { json(data){ return res.render('stores_edit', { user: req.user, store: data }); }, status(c){ this._s=c; return this; } };
+    const fakeRes = {
+      json(data) {
+        return renderWithLayout(res, 'stores_edit', {
+          title: 'Edit Store',
+          styles: ['stores'],
+          user: req.user,
+          store: data
+        });
+      },
+      status(c) { this._s = c; return this; }
+    };
     await getStoreById(req, fakeRes, next);
   } catch (e) { next(e); }
 });
@@ -108,7 +203,12 @@ router.post('/stores', protect, async (req, res, next) => {
     };
     await createStore(req, fakeRes, next);
   } catch (e) {
-    res.render('stores_new', { user: req.user, error: 'Failed to create store' });
+    renderWithLayout(res, 'stores_new', {
+      title: 'Create Store',
+      styles: ['stores'],
+      user: req.user,
+      messages: { error: 'Failed to create store' }
+    });
   }
 });
 
@@ -132,17 +232,37 @@ router.post('/stores/:id', protect, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-module.exports = router;
 // Merchant document upload
 router.get('/stores/:id/documents', protect, isMerchant, (req, res) => {
-  res.render('stores_upload', { user: req.user, storeId: req.params.id, error: null });
+  renderWithLayout(res, 'stores_upload', {
+    title: 'Upload Documents',
+    styles: ['stores'],
+    user: req.user,
+    storeId: req.params.id,
+    error: null
+  });
 });
 
 // ----- Admin: Users Management -----
 router.get('/admin/users', protect, async (req, res, next) => {
   if (req.user.role !== 'admin') return res.status(403).send('Forbidden');
   try {
-    const fakeRes = { json(data){ const payload = Array.isArray(data)?{items:data,page:1,limit:data.length,total:data.length}:data; return res.render('users_list', { user: req.user, users: payload.items, q: req.query.q, page: payload.page||1, limit: payload.limit||10, hasMore: (payload.page||1)*(payload.limit||10) < (payload.total||0) }); }, status(c){ this._s=c; return this; } };
+    const fakeRes = {
+      json(data) {
+        const payload = Array.isArray(data) ? { items: data, page: 1, limit: data.length, total: data.length } : data;
+        return renderWithLayout(res, 'users_list', {
+          title: 'Users',
+          styles: ['users'],
+          user: req.user,
+          users: payload.items,
+          q: req.query.q,
+          page: payload.page || 1,
+          limit: payload.limit || 10,
+          hasMore: (payload.page || 1) * (payload.limit || 10) < (payload.total || 0)
+        });
+      },
+      status(c) { this._s = c; return this; }
+    };
     await listUsers(req, fakeRes, next);
   } catch (e) { next(e); }
 });
@@ -170,25 +290,87 @@ router.post('/admin/users/:id', protect, async (req, res, next) => {
 // ----- Admin/Merchant: Products Management -----
 router.get('/admin/products', protect, async (req, res, next) => {
   try {
-    const fakeRes = { json(data){ const payload = Array.isArray(data)?{items:data,page:1,limit:data.length,total:data.length}:data; res.render('products_list', { user: req.user, products: payload.items, storeId: req.query.storeId, q: req.query.q, page: payload.page||1, limit: payload.limit||10, hasMore: (payload.page||1)*(payload.limit||10) < (payload.total||0) }); }, status(c){ this._s=c; return this; } };
+    const fakeRes = { 
+      json(data) {
+        const payload = Array.isArray(data) ? {
+          items: data,
+          page: 1,
+          limit: data.length,
+          total: data.length
+        } : data;
+        
+        return renderWithLayout(res, 'products_list', {
+          title: 'Products',
+          styles: ['products'],
+          scripts: ['products'],
+          user: req.user,
+          products: payload.items,
+          storeId: req.query.storeId,
+          q: req.query.q,
+          page: payload.page || 1,
+          limit: payload.limit || 10,
+          hasMore: (payload.page || 1) * (payload.limit || 10) < (payload.total || 0)
+        });
+      },
+      status(c) { 
+        this._s = c; 
+        return this; 
+      }
+    };
     await listProducts(req, fakeRes, next);
-  } catch (e) { next(e); }
+  } catch (e) {
+    renderWithLayout(res, 'products_list', {
+      title: 'Products',
+      styles: ['products'],
+      scripts: ['products'],
+      user: req.user,
+      products: [],
+      storeId: req.query.storeId,
+      q: req.query.q,
+      page: 1,
+      limit: 10,
+      hasMore: false,
+      messages: { error: 'Error loading products' }
+    });
+  }
 });
 
 router.get('/admin/products/new', protect, (req, res) => {
-  res.render('products_new', { user: req.user, error: null });
+  renderWithLayout(res, 'products_new', {
+    title: 'New Product',
+    styles: ['products'],
+    user: req.user,
+    error: null
+  });
 });
 
 router.post('/admin/products', protect, upload.single('image'), async (req, res, next) => {
   try {
     const fakeRes = { status(c){ this._s=c; return this; }, json(){ return res.redirect('/admin/products'); } };
     await createProduct(req, fakeRes, next);
-  } catch (e) { res.render('products_new', { user: req.user, error: 'Failed to create product' }); }
+  } catch (e) {
+    renderWithLayout(res, 'products_new', {
+      title: 'New Product',
+      styles: ['products'],
+      user: req.user,
+      messages: { error: 'Failed to create product' }
+    });
+  }
 });
 
 router.get('/admin/products/:id/edit', protect, async (req, res, next) => {
   try {
-    const fakeRes = { json(data){ res.render('products_edit', { user: req.user, product: data }); }, status(c){ this._s=c; return this; } };
+    const fakeRes = {
+      json(data) {
+        return renderWithLayout(res, 'products_edit', {
+          title: 'Edit Product',
+          styles: ['products'],
+          user: req.user,
+          product: data
+        });
+      },
+      status(c) { this._s = c; return this; }
+    };
     await getProduct(req, fakeRes, next);
   } catch (e) { next(e); }
 });
@@ -221,8 +403,17 @@ router.post('/stores/:id/documents', protect, isMerchant, upload.single('documen
     };
     await uploadStoreDocument(req, fakeRes, next);
   } catch (e) {
-    res.render('stores_upload', { user: req.user, storeId: req.params.id, error: 'Upload failed' });
+    renderWithLayout(res, 'stores_upload', {
+      title: 'Upload Documents',
+      styles: ['stores'],
+      user: req.user,
+      storeId: req.params.id,
+      messages: { error: 'Upload failed' }
+    });
   }
 });
+
+// Export router after all routes
+module.exports = router;
 
 

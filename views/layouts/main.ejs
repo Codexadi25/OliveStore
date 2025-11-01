@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="OliveStore - Empowering local businesses" />
+    <title><%= typeof title !== 'undefined' ? `${title} - OliveStore` : 'OliveStore' %></title>
+    
+    <!-- Base styles -->
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/navbar.css" />
+    <link rel="stylesheet" href="/css/footer.css" />
+    
+    <!-- Page-specific styles -->
+    <% if (typeof styles !== 'undefined' && styles.length > 0) { %>
+        <% styles.forEach(function(style) { %>
+            <link rel="stylesheet" href="<%= style %>" />
+        <% }); %>
+    <% } %>
+
+    <!-- Common UI utilities -->
+    <script src="/js/ui.js" defer></script>
+
+    <!-- Page-specific scripts -->
+    <% if (typeof scripts !== 'undefined' && scripts.length > 0) { %>
+        <% scripts.forEach(function(script) { %>
+            <script src="<%= script %>" defer></script>
+        <% }); %>
+    <% } %>
+</head>
+<body>
+    <!-- Common Header/Navbar -->
+    <%- include('../partials/navbar', { user: user || null }) %>
+
+    <!-- Main Content -->
+    <div class="app-wrapper">
+        <%- body %>
+    </div>
+
+    <!-- Toast Container for Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- Footer -->
+    <% if (typeof showFooter === 'undefined' || showFooter !== false) { %>
+        <%- include('../partials/footer') %>
+    <% } %>
+
+    <!-- Flash Messages -->
+    <% if (typeof messages !== 'undefined' && messages) { 
+        if (messages.success) { %>
+            <script>window.UI && UI.showSuccess(`<%= messages.success %>`);</script>
+        <% }
+        if (messages.error) { %>
+            <script>window.UI && UI.showError(`<%= messages.error %>`);</script>
+        <% }
+        if (messages.info) { %>
+            <script>window.UI && UI.showInfo(`<%= messages.info %>`);</script>
+        <% }
+    } %>
+</body>
+</html>

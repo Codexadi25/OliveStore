@@ -1,0 +1,226 @@
+/* Common auth styles for Login & Register pages
+   Place a <link rel="stylesheet" href="/css/auth_common.css"> in the EJS templates
+   This file is written to be additive to `public/css/auth.css` and other global styles.
+*/
+
+/* Auth-specific variables */
+:root {
+  --auth-max-width: 420px;
+  --auth-gap: 16px;
+}
+
+/* Override background gradient */
+body {
+  background: linear-gradient(180deg, var(--background) 0%, var(--surface) 100%);
+}
+
+/* Page background and layout */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8) var(--spacing-4);
+  font-family: var(--font-family);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: var(--auth-max-width);
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--spacing-6);
+  box-sizing: border-box;
+  border: 1px solid rgba(16, 24, 40, 0.04);
+}
+
+.auth-header{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.auth-header h1{
+  margin: 0;
+  font-size: 22px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.auth-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Form layout */
+.auth-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--auth-gap);
+  margin-top: var(--spacing-2);
+}
+
+label {
+  font-size: var(--font-size-sm);
+  color: var(--text-1);
+  display: block;
+  margin-bottom: var(--spacing-2);
+}
+
+.input,
+.input[type="text"],
+.input[type="email"],
+.input[type="password"],
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: var(--surface);
+  box-sizing: border-box;
+  outline: none;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  font-size: var(--font-size-sm);
+  color: var(--text-1);
+}
+
+input:focus,
+.input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.12);
+}
+
+.form-row { 
+  display: flex; 
+  gap: var(--spacing-3);
+}
+
+.helper { 
+  font-size: var(--font-size-xs); 
+  color: var(--muted); 
+}
+
+.actions { 
+  display: flex; 
+  gap: var(--spacing-3); 
+  align-items: center; 
+  justify-content: space-between; 
+}
+
+.btn {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover { 
+  background: var(--primary-dark);
+  box-shadow: var(--shadow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-hover);
+}
+
+.separator {
+  height: 1px;
+  background: rgba(15, 23, 42, 0.04);
+  margin: var(--spacing-2) 0 var(--spacing-3);
+}
+
+.small { 
+  font-size: var(--font-size-sm); 
+}
+
+.error { 
+  color: var(--danger); 
+  font-size: var(--font-size-sm);
+}
+
+.link { 
+  color: var(--primary); 
+  text-decoration: none; 
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: var(--primary-dark);
+}
+
+.password-row { 
+  display: flex; 
+  align-items: center; 
+  gap: var(--spacing-2); 
+}
+
+.password-toggle { 
+  background: transparent; 
+  border: none; 
+  color: var(--muted); 
+  cursor: pointer; 
+  font-size: var(--font-size-sm); 
+  padding: var(--spacing-2); 
+}
+
+/* Responsive tweaks */
+@media (max-width: 520px) {
+  .auth-card { 
+    padding: var(--spacing-4);
+    border-radius: var(--radius-sm);
+  }
+  
+  .auth-page {
+    padding: var(--spacing-4) var(--spacing-2);
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  
+  .actions {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
+  :root{ --max-width: 420px; }
+
+/* Simple visual helpers used by server-side rendering */
+.center{ text-align:center; }
+.mt-8{ margin-top:8px; }
+.mb-8{ margin-bottom:8px; }
+
+/* Accessibility focus ring for keyboard users */
+[tabindex]:focus, a:focus, button:focus, input:focus { outline: 3px solid rgba(39,110,241,0.12); outline-offset: 2px; }
+
+/* Example usage notes (do not include in templates):
+   - Add `class="auth-page"` wrapper around the page
+   - Inside: <div class="auth-card"> with header and <form class="auth-form">
+   - Keep `public/css/auth.css` loaded too (contains small page-specific tweaks)
+*/

@@ -1,3 +1,194 @@
-/* Admin panel */
-.admin .card-grid { margin-top: 12px; }
+/* Enhanced Admin Panel */
+.admin-dashboard {
+  padding: var(--spacing-6) 0;
+}
+
+.admin .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.admin .card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-6);
+  margin: var(--spacing-6) 0;
+}
+
+.admin .stat-card {
+  background: var(--surface);
+  padding: var(--spacing-6);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+
+.admin .stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.admin .stat-title {
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-2);
+}
+
+.admin .stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.admin .stat-change {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+}
+
+.admin .change-positive {
+  color: var(--success);
+}
+
+.admin .change-negative {
+  color: var(--danger);
+}
+
+/* User Management */
+.admin .user-list {
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.admin .user-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-4);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin .user-item:last-child {
+  border-bottom: none;
+}
+
+.admin .user-info {
+  flex: 1;
+}
+
+.admin .user-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.admin .user-email {
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+}
+
+.admin .user-role {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.admin .user-actions {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+/* Role Management Modal */
+.admin .role-modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: var(--spacing-6);
+  max-width: 400px;
+  margin: var(--spacing-8) auto;
+}
+
+.admin .role-options {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: var(--spacing-4) 0;
+}
+
+.admin .role-option {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-3);
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.admin .role-option:hover {
+  background: var(--surface-hover);
+}
+
+.admin .role-option.selected {
+  border-color: var(--primary);
+  background: rgba(37, 99, 235, 0.1);
+}
+
+/* Activity Log */
+.admin .activity-log {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: var(--spacing-4);
+}
+
+.admin .log-entry {
+  display: flex;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin .log-entry:last-child {
+  border-bottom: none;
+}
+
+.admin .log-time {
+  color: var(--muted);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.admin .log-action {
+  flex: 1;
+}
+
+.admin .log-user {
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin .card-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin .section-header {
+    flex-direction: column;
+    gap: var(--spacing-4);
+    align-items: flex-start;
+  }
+  
+  .admin .user-item {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  
+  .admin .user-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
 

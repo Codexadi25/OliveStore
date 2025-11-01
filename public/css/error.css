@@ -1,0 +1,34 @@
+.error-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: 2rem;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 600px;
+}
+
+.error-content h1 {
+    color: var(--text-1);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    color: var(--text-2);
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.error-actions .btn {
+    min-width: 120px;
+}
